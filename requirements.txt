@@ -1,10 +1,7 @@
-# local package
--e .
-
-# external requirements
-click
-Sphinx
-coverage
-awscli
-flake8
+click==8.1.3
+#Sphinx==5.2.3
 python-dotenv>=0.5.1
+moviepy==1.0.3
+roboflow==0.2.15
+pyyaml==6.0
+easyocr==1.6.2

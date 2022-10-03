@@ -1,0 +1,13 @@
+data:
+  model_format: yolov7
+  dataset_location: data
+model:
+  model_filepath: models/yolov7.pt
+  trained_weights: /yolov7/runs/train/exp/weights/best.pt # Path to weights file default weights are for nano model
+  data_yaml: /data.yaml
+  img_size: 640 # default image size
+  conf_threshold: 0.45 # confidence threshold for inference.
+  iou_threshold: 0.45 # NMS IoU threshold for inference.
+  device: 'cpu'  # device to run our model i.e. 0 or 0,1,2,3 or cpu
+  classes: classes_to_filter  # list of classes to filter or None
+  output_path: /predicted.jpg

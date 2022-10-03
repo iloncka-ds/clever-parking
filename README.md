@@ -3,6 +3,11 @@ clever-parking
 
 Service for car license plate number, type, color, moving direction automatic detection
 
+## How to run
+
+pip install -r requirements.txt
+pip install -r yolov7/requirements.txt
+
 Project Organization
 ------------
 
