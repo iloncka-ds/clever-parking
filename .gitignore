@@ -19,7 +19,7 @@ lib64/
 parts/
 sdist/
 var/
-# yolov7/
+yolov7/
 *.egg-info/
 .installed.cfg
 *.egg
