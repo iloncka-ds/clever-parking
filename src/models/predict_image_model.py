@@ -53,7 +53,7 @@ def read_image(image_path, img_size, device, half, stride):
     return img_0, img
 
 
-def save_result(colors, config, img, img_0, names, prediction):
+def save_result(colors, config, img, img_0, names, prediction, image_path):
     for i, det in enumerate(prediction):
         s = "%gx%g " % img.shape[2:]
         if len(det):
@@ -92,8 +92,9 @@ def save_result(colors, config, img, img_0, names, prediction):
                     color=(50, 50, 255),
                     thickness=2,
                 )
-                path = str(Path(__file__).resolve().parents[2] / config['predict']["image_output_path"])
-                cv2.imwrite(path, img_0)
+                result_path = str(
+                    Path(__file__).resolve().parents[2] / Path(config['predict']['output_path']) / image_path)
+                cv2.imwrite(result_path, img_0)
 
 
 @click.command()
@@ -139,8 +140,8 @@ def predict(config_path, image_path):
             classes=classes,
             agnostic=False,
         )
-
-        save_result(colors, config, img, img_0, names, prediction)
+        image_path = Path(image_path).name
+        save_result(colors, config, img, img_0, names, prediction, image_path)
 
 
 if __name__ == "__main__":
