@@ -13,10 +13,11 @@ sys.path.append(str(Path(__file__).resolve().parents[2]))
 
 
 from yolov7.models.experimental import attempt_load
-from yolov7.utils.general import (check_img_size, non_max_suppression, scale_coords, set_logging)
+from yolov7.utils.datasets import letterbox
+from yolov7.utils.general import (check_img_size, non_max_suppression,
+                                  scale_coords, set_logging)
 from yolov7.utils.plots import plot_one_box
 from yolov7.utils.torch_utils import select_device
-from yolov7.utils.datasets import letterbox
 
 
 def setup_model(device, half, image_size, weights):
@@ -29,7 +30,9 @@ def setup_model(device, half, image_size, weights):
     colors = [[random.randint(0, 255) for _ in range(3)] for _ in names]
     if device.type != "cpu":
         model(
-            torch.zeros(1, 3, image_size, image_size).to(device).type_as(next(model.parameters()))
+            torch.zeros(1, 3, image_size, image_size)
+            .to(device)
+            .type_as(next(model.parameters()))
         )
     return colors, image_size, model, names, stride
 
@@ -47,7 +50,7 @@ def setup_model(device, half, image_size, weights):
     "--video_path",
     type=click.Path(exists=True),
     help="Path to image",
-    default='data/sample_video.mp4',
+    default="data/sample_video.mp4",
 )
 def predict(config_path, video_path):
     with open(config_path) as conf_file:
@@ -55,28 +58,42 @@ def predict(config_path, video_path):
 
     video = cv2.VideoCapture(video_path)
     video_path = Path(video_path).name
-    result_path = str(Path(__file__).resolve().parents[2] / Path(config['predict']['output_path']) / video_path)
+    result_path = str(
+        Path(__file__).resolve().parents[2]
+        / Path(config["predict"]["output_path"])
+        / video_path
+    )
 
     fps = video.get(cv2.CAP_PROP_FPS)
     w = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
     h = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
     n_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
 
-    output = cv2.VideoWriter(result_path, cv2.VideoWriter_fourcc(*"DIVX"), fps, (w, h))
+    output = cv2.VideoWriter(
+        result_path,
+        cv2.VideoWriter_fourcc(*"DIVX"),
+        fps,
+        (w, h),
+    )
     torch.cuda.empty_cache()
 
     with torch.no_grad():
-        weights, image_size = config['model']["trained_weights"], config['model']["img_size"]
+        weights, image_size = (
+            config["model"]["trained_weights"],
+            config["model"]["img_size"],
+        )
         set_logging()
-        device = select_device(config['model']["device"])
+        device = select_device(config["model"]["device"])
         half = device.type != "cpu"
-        colors, image_size, model, names, stride = setup_model(device, half, image_size, weights)
+        colors, image_size, model, names, stride = setup_model(
+            device, half, image_size, weights
+        )
 
         classes = None
-        if config['model']["classes"]:
+        if config["model"]["classes"]:
             classes = []
-            for class_name in config['model']["classes"]:
-                classes.append(config['model']["classes"].index(class_name))
+            for class_name in config["model"]["classes"]:
+                classes.append(config["model"]["classes"].index(class_name))
 
         for j in range(n_frames):
             ret, img_0 = video.read()
@@ -85,15 +102,14 @@ def predict(config_path, video_path):
                 prediction = model(img, augment=False)[0]
                 prediction = non_max_suppression(
                     prediction,
-                    config['model']["conf_threshold"],
-                    config['model']["iou_threshold"],
+                    config["model"]["conf_threshold"],
+                    config["model"]["iou_threshold"],
                     classes=classes,
                     agnostic=False,
                 )
 
                 for i, det in enumerate(prediction):
                     s = "%gx%g " % img.shape[2:]
-                    gn = torch.tensor(img_0.shape)[[1, 0, 1, 0]]
                     if len(det):
                         det[:, :4] = scale_coords(
                             img.shape[2:], det[:, :4], img_0.shape

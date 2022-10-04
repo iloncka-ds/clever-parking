@@ -1,5 +1,5 @@
-import sys
 import logging
+import sys
 from pathlib import Path
 
 import click
@@ -13,10 +13,11 @@ from numpy import random
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
 from yolov7.models.experimental import attempt_load
-from yolov7.utils.general import (check_img_size, non_max_suppression, scale_coords, set_logging)
+from yolov7.utils.datasets import letterbox
+from yolov7.utils.general import (check_img_size, non_max_suppression,
+                                  scale_coords, set_logging)
 from yolov7.utils.plots import plot_one_box
 from yolov7.utils.torch_utils import select_device
-from yolov7.utils.datasets import letterbox
 
 
 def setup_model(device, half, img_size, weights):
@@ -57,7 +58,11 @@ def save_result(colors, config, img, img_0, names, prediction, image_path):
     for i, det in enumerate(prediction):
         s = "%gx%g " % img.shape[2:]
         if len(det):
-            det[:, :4] = scale_coords(img.shape[2:], det[:, :4], img_0.shape).round()
+            det[:, :4] = scale_coords(
+                img.shape[2:],
+                det[:, :4],
+                img_0.shape,
+            ).round()
 
             for c in det[:, -1].unique():
                 # detections per class
@@ -85,7 +90,8 @@ def save_result(colors, config, img, img_0, names, prediction, image_path):
                 confidence_text_prediction = str(ocr_result[0][2])
                 cv2.putText(
                     img=img_0,
-                    text=f'{text_predicted}, conf: {confidence_text_prediction}',
+                    text=f"{text_predicted}, "
+                         f"conf:{confidence_text_prediction}",
                     org=(50, 70),
                     fontFace=cv2.FONT_HERSHEY_TRIPLEX,
                     fontScale=1,
@@ -93,7 +99,10 @@ def save_result(colors, config, img, img_0, names, prediction, image_path):
                     thickness=2,
                 )
                 result_path = str(
-                    Path(__file__).resolve().parents[2] / Path(config['predict']['output_path']) / image_path)
+                    Path(__file__).resolve().parents[2]
+                    / Path(config["predict"]["output_path"])
+                    / image_path
+                )
                 cv2.imwrite(result_path, img_0)
 
 
@@ -110,33 +119,38 @@ def save_result(colors, config, img, img_0, names, prediction, image_path):
     "--image_path",
     type=click.Path(exists=True),
     help="Path to image",
-    default='data/test/images/11_6_2014_19_13_50_783_png.rf.a9120a368809012eb18f2b2199db6183.jpg',
+    default="data/test/images/1_bmp.rf.57586ea1a6f8ecfe067f3f82e642128c.jpg",
 )
 def predict(config_path, image_path):
     with open(config_path) as conf_file:
         config = yaml.safe_load(conf_file)
 
     with torch.no_grad():
-        weights, img_size = config["model"]["trained_weights"], config['model']["img_size"]
+        weights, img_size = (
+            config["model"]["trained_weights"],
+            config["model"]["img_size"],
+        )
         set_logging()
-        device = select_device(config['model']["device"])
+        device = select_device(config["model"]["device"])
         half = device.type != "cpu"
-        colors, img_size, model, names, stride = setup_model(device, half, img_size, weights)
+        colors, img_size, model, names, stride = setup_model(
+            device, half, img_size, weights
+        )
 
         img_0, img = read_image(image_path, img_size, device, half, stride)
         prediction = model(img, augment=False)[0]
 
         # Apply NMS
         classes = None
-        if config['model']["classes"]:
+        if config["model"]["classes"]:
             classes = []
-            for class_name in config['model']["classes"]:
-                classes.append(config['model']["classes"].index(class_name))
+            for class_name in config["model"]["classes"]:
+                classes.append(config["model"]["classes"].index(class_name))
 
         prediction = non_max_suppression(
             prediction,
-            config['model']["conf_threshold"],
-            config['model']["iou_threshold"],
+            config["model"]["conf_threshold"],
+            config["model"]["iou_threshold"],
             classes=classes,
             agnostic=False,
         )
