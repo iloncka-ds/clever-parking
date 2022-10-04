@@ -1,0 +1,1 @@
+python src/models/predict_video_model.py --config_path params.yaml --video_path data/sample_video.mp4
