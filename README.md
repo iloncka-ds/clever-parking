@@ -48,8 +48,8 @@ Project Organization
     │   │   └── load_dataset.py
     │   │
     │   └── models         <- Scripts to train models and then use trained models to make predictions
-    │      ├── predict_model.py
-    │      └── train_model.py
+    │      ├── predict_image_model.py
+    │      └── predict_video_model.py
     ├── yolov7             <- yolov7 project code as git submodule
     │
     └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
