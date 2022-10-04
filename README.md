@@ -6,6 +6,21 @@ clever-parking
 Service for car license plate number, type, color, moving direction automatic detection
 The service is based on yolo7 model and EasyOCR project.
 
+## Dataset description
+
+We use open source [Russian plate Dataset](https://universe.roboflow.com/plate-tsusp/russian-plate) for the Object Detection task.
+
+The dataset contains 848 images and was provided by Roboflow.
+
+Roboflow is an end-to-end computer vision platform that helps you:
+* collaborate with your team on computer vision projects
+* collect & organize images
+* understand unstructured image data
+* annotate, and create datasets
+* export, train, and deploy computer vision models
+* use active learning to improve your dataset over time
+
+
 Project Organization
 ------------
 
