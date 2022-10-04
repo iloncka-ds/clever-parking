@@ -11,5 +11,4 @@ model:
   device: 'cpu'  # device to run our model i.e. 0 or 0,1,2,3 or cpu
   classes: classes_to_filter  # list of classes to filter or None
 predict:
-  video_path: data/P1033666.mp4
-  image_output_path: data/result/predicted.jpg
+  output_path: data/result/
