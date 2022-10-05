@@ -58,7 +58,10 @@ Project Organization
 
 ## Metrics
 
-
+- **Precision** measures how accurate is your predictions. i.e. the percentage of your predictions are correct.
+- **IoU** measures the overlap between 2 boundaries. We use that to measure how much our predicted boundary overlaps with the ground truth (the real object boundary).
+- **Recall** measures how good you find all the positives. For example, we can find 80% of the possible positive cases in our top K predictions. 
+- **AP** is the average over multiple IoU (the minimum IoU to consider a positive match). AP@[.5:.95] corresponds to the average AP for IoU from 0.5 to 0.95 with a step size of 0.05. **mAP** (mean average precision) is the average of AP. 
 
 ### Experiments setup
 
