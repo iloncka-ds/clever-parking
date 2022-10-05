@@ -107,3 +107,5 @@ the next step is run one of the .sh scripts:
 - to train model you can use `scripts/predict_for_video.sh`
 
 You can edit these scripts if you need.
+
+Main project parameters are settled in [params.yaml](https://github.com/iloncka-ds/clever-parking/blob/main/params.yaml) so you can edit this file too
