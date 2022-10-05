@@ -3,7 +3,7 @@ clever-parking
 
 ## Project description
 
-Service for car license plate number, type, color, moving direction automatic detection
+Service for car license plate number automatic detection
 The service is based on yolo7 model and EasyOCR project.
 
 ## Dataset description
