@@ -1,1 +1,1 @@
-python src/models/predict_image_model.py --config_path params.yaml --image_path data/test/images/11_6_2014_19_13_50_783_png.rf.a9120a368809012eb18f2b2199db6183.jpg
+python src/models/predict_image_model.py --config_path params.yaml --image_path data/test/images/11_6_2014_18_42_28_170_png.rf.b4c7f94fc48a87b56ae78a7a72ea7f45.jpg

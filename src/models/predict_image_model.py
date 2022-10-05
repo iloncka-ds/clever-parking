@@ -55,6 +55,7 @@ def read_image(image_path, img_size, device, half, stride):
 
 
 def save_result(colors, config, img, img_0, names, prediction, image_path):
+    print(prediction)
     for i, det in enumerate(prediction):
         s = "%gx%g " % img.shape[2:]
         if len(det):
@@ -103,6 +104,7 @@ def save_result(colors, config, img, img_0, names, prediction, image_path):
                     / Path(config["predict"]["output_path"])
                     / image_path
                 )
+                print(result_path)
                 cv2.imwrite(result_path, img_0)
 
 

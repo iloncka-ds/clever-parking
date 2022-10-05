@@ -6,6 +6,7 @@ import click
 import cv2
 import numpy as np
 import torch
+import easyocr
 import yaml
 from numpy import random
 
@@ -119,7 +120,7 @@ def predict(config_path, video_path):
                             # detections per class
                             n = (det[:, -1] == c).sum()
                             s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "
-
+                        has_number = False
                         for *xyxy, conf, cls in reversed(det):
                             label = f"{names[int(cls)]} {conf:.2f}"
                             plot_one_box(
@@ -129,6 +130,28 @@ def predict(config_path, video_path):
                                 color=colors[int(cls)],
                                 line_thickness=3,
                             )
+                            img_cropped = img_0[
+                                          int(xyxy[1]): int(xyxy[3]), int(xyxy[0]): int(xyxy[2])
+                                          ]
+                            gray = cv2.cvtColor(img_cropped, cv2.COLOR_RGB2GRAY)
+                            ocr_result = reader.readtext(gray)
+                            if len(ocr_result) == 0:
+                                continue
+                            text_predicted = ocr_result[0][1]
+                            print(f'Detected number: {text_predicted}')
+                            confidence_text_prediction = str(ocr_result[0][2])
+                            if has_number:
+                                continue
+                            cv2.putText(
+                                img=img_0,
+                                text=f"{text_predicted}",
+                                org=(50, 70),
+                                fontFace=cv2.FONT_HERSHEY_TRIPLEX,
+                                fontScale=1,
+                                color=(50, 50, 255),
+                                thickness=2,
+                            )
+                            has_number = True
                 print(f"{j+1}/{n_frames} frames processed")
                 output.write(img_0)
             else:
@@ -158,4 +181,5 @@ def process_img(device, half, image_size, img_0, stride):
 if __name__ == "__main__":
     log_fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     logging.basicConfig(level=logging.INFO, format=log_fmt)
+    reader = easyocr.Reader(["en"], gpu=True)
     predict()
