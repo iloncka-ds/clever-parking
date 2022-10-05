@@ -54,8 +54,40 @@ Project Organization
     │
     └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
 
+## Experiments
 
---------
+## Metrics
+
+
+
+### Experiments setup
+
+- Hardware
+    - CPU count: 1
+    - GPU count: 1
+    - GPU type: Tesla T4
+- Software:
+    - Python version: 3.7.14
+    - OS: Linux-5.10.133+-x86_64-with-Ubuntu-18.04-bionic
+- Training params:
+    - Batch size: 16
+    - Image size: 640x640
+    - Epochs: 55
+    - Weight decay: 0.0005
+    - Warmup momentum: 0.8
+    - Warmup epochs: 3
+
+| Model  | Precision | Recall | mAP@[.5] | mAP@[.5:.95] |
+| ------------- | ------------- |------------- |------------- |------------- |
+|  yolov7-e6   |  0.2246 | 0.3684 | 0.1329 | 0.04663 |
+|  yolov7-w6   |  0.9885 | 0.05263 | 0.05659 | 0.005891 |
+|  yolov7x   |  0.2692 | 0.2632 | 0.1553 | 0.04348 |
+|  yolov7   |  0.9999  | 1 | 0.9952 | 0.7518 |
+
+[Weights&Biases Experiments report](https://wandb.ai/dl-learning/YOLOR/reports/---VmlldzoyNzQ0Mzk1?accessToken=1rma5zlp2ee59b9uxart20401fiofe9d3q0jml03mkozgwbktvdjmav20tideqdz)
+
+###
+
 
 ## How to run
 
