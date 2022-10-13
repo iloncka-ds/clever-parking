@@ -14,8 +14,7 @@ sys.path.append(str(Path(__file__).resolve().parents[2]))
 
 from yolov7.models.experimental import attempt_load
 from yolov7.utils.datasets import letterbox
-from yolov7.utils.general import (check_img_size, non_max_suppression,
-                                  scale_coords, set_logging)
+from yolov7.utils.general import check_img_size, non_max_suppression, scale_coords, set_logging
 from yolov7.utils.plots import plot_one_box
 from yolov7.utils.torch_utils import select_device
 
@@ -29,11 +28,7 @@ def setup_model(device, half, img_size, weights):
     names = model.module.names if hasattr(model, "module") else model.names
     colors = [[random.randint(0, 255) for _ in range(3)] for _ in names]
     if device.type != "cpu":
-        model(
-            torch.zeros(1, 3, img_size, img_size)
-            .to(device)
-            .type_as(next(model.parameters()))
-        )
+        model(torch.zeros(1, 3, img_size, img_size).to(device).type_as(next(model.parameters())))
     return colors, img_size, model, names, stride
 
 
@@ -80,9 +75,7 @@ def save_result(colors, config, img, img_0, names, prediction, image_path):
                     line_thickness=3,
                 )
 
-                img_cropped = img_0[
-                    int(xyxy[1]): int(xyxy[3]), int(xyxy[0]): int(xyxy[2])
-                ]
+                img_cropped = img_0[int(xyxy[1]) : int(xyxy[3]), int(xyxy[0]) : int(xyxy[2])]
                 gray = cv2.cvtColor(img_cropped, cv2.COLOR_RGB2GRAY)
                 ocr_result = reader.readtext(gray)
                 if len(ocr_result) == 0:
@@ -91,8 +84,7 @@ def save_result(colors, config, img, img_0, names, prediction, image_path):
                 confidence_text_prediction = str(ocr_result[0][2])
                 cv2.putText(
                     img=img_0,
-                    text=f"{text_predicted}, "
-                         f"conf:{confidence_text_prediction}",
+                    text=f"{text_predicted}, " f"conf:{confidence_text_prediction}",
                     org=(50, 70),
                     fontFace=cv2.FONT_HERSHEY_TRIPLEX,
                     fontScale=1,
@@ -100,9 +92,7 @@ def save_result(colors, config, img, img_0, names, prediction, image_path):
                     thickness=2,
                 )
                 result_path = str(
-                    Path(__file__).resolve().parents[2]
-                    / Path(config["predict"]["output_path"])
-                    / image_path
+                    Path(__file__).resolve().parents[2] / Path(config["predict"]["output_path"]) / image_path
                 )
                 print(result_path)
                 cv2.imwrite(result_path, img_0)
@@ -135,9 +125,7 @@ def predict(config_path, image_path):
         set_logging()
         device = select_device(config["model"]["device"])
         half = device.type != "cpu"
-        colors, img_size, model, names, stride = setup_model(
-            device, half, img_size, weights
-        )
+        colors, img_size, model, names, stride = setup_model(device, half, img_size, weights)
 
         img_0, img = read_image(image_path, img_size, device, half, stride)
         prediction = model(img, augment=False)[0]
