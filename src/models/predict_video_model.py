@@ -4,9 +4,9 @@ from pathlib import Path
 
 import click
 import cv2
+import easyocr
 import numpy as np
 import torch
-import easyocr
 import yaml
 from numpy import random
 
@@ -15,8 +15,7 @@ sys.path.append(str(Path(__file__).resolve().parents[2]))
 
 from yolov7.models.experimental import attempt_load
 from yolov7.utils.datasets import letterbox
-from yolov7.utils.general import (check_img_size, non_max_suppression,
-                                  scale_coords, set_logging)
+from yolov7.utils.general import check_img_size, non_max_suppression, scale_coords, set_logging
 from yolov7.utils.plots import plot_one_box
 from yolov7.utils.torch_utils import select_device
 
@@ -30,11 +29,7 @@ def setup_model(device, half, image_size, weights):
     names = model.module.names if hasattr(model, "module") else model.names
     colors = [[random.randint(0, 255) for _ in range(3)] for _ in names]
     if device.type != "cpu":
-        model(
-            torch.zeros(1, 3, image_size, image_size)
-            .to(device)
-            .type_as(next(model.parameters()))
-        )
+        model(torch.zeros(1, 3, image_size, image_size).to(device).type_as(next(model.parameters())))
     return colors, image_size, model, names, stride
 
 
@@ -59,11 +54,7 @@ def predict(config_path, video_path):
 
     video = cv2.VideoCapture(video_path)
     video_path = Path(video_path).name
-    result_path = str(
-        Path(__file__).resolve().parents[2]
-        / Path(config["predict"]["output_path"])
-        / video_path
-    )
+    result_path = str(Path(__file__).resolve().parents[2] / Path(config["predict"]["output_path"]) / video_path)
 
     fps = video.get(cv2.CAP_PROP_FPS)
     w = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -86,9 +77,7 @@ def predict(config_path, video_path):
         set_logging()
         device = select_device(config["model"]["device"])
         half = device.type != "cpu"
-        colors, image_size, model, names, stride = setup_model(
-            device, half, image_size, weights
-        )
+        colors, image_size, model, names, stride = setup_model(device, half, image_size, weights)
 
         classes = None
         if config["model"]["classes"]:
@@ -112,9 +101,7 @@ def predict(config_path, video_path):
                 for i, det in enumerate(prediction):
                     s = "%gx%g " % img.shape[2:]
                     if len(det):
-                        det[:, :4] = scale_coords(
-                            img.shape[2:], det[:, :4], img_0.shape
-                        ).round()
+                        det[:, :4] = scale_coords(img.shape[2:], det[:, :4], img_0.shape).round()
 
                         for c in det[:, -1].unique():
                             # detections per class
@@ -130,15 +117,13 @@ def predict(config_path, video_path):
                                 color=colors[int(cls)],
                                 line_thickness=3,
                             )
-                            img_cropped = img_0[
-                                          int(xyxy[1]): int(xyxy[3]), int(xyxy[0]): int(xyxy[2])
-                                          ]
+                            img_cropped = img_0[int(xyxy[1]) : int(xyxy[3]), int(xyxy[0]) : int(xyxy[2])]
                             gray = cv2.cvtColor(img_cropped, cv2.COLOR_RGB2GRAY)
                             ocr_result = reader.readtext(gray)
                             if len(ocr_result) == 0:
                                 continue
                             text_predicted = ocr_result[0][1]
-                            print(f'Detected number: {text_predicted}')
+                            print(f"Detected number: {text_predicted}")
                             confidence_text_prediction = str(ocr_result[0][2])
                             if has_number:
                                 continue
