@@ -1,4 +1,4 @@
-import logging
+"""import logging
 import sys
 from pathlib import Path
 
@@ -153,3 +153,4 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format=log_fmt)
     reader = easyocr.Reader(["en"], gpu=True)
     predict()
+"""
